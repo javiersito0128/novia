@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San Valentín - Para Paola</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #6b7c6e 0%, #8a9a8d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .container {
+            perspective: 2000px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 90vw;
+            max-width: 500px;
+            height: 70vh;
+            max-height: 350px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(1deg);
+            }
+        }
+
+        /* Envelope body */
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: white;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Back triangular flap */
+        .flap-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .flap-back::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 250px 175px 250px;
+            border-color: transparent transparent #e8e8e8 transparent;
+        }
+
+        /* Front triangular flap that opens */
+        .flap-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            overflow: visible;
+            z-index: 4;
+            transform-origin: top center;
+            transform-style: preserve-3d;
+            transition: transform 2s ease-in-out;
+        }
+
+        .flap-top::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 250px 175px 250px;
+            border-color: transparent transparent white transparent;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Left side flap */
+        .flap-left {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .flap-left::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 0 350px 250px;
+            border-color: transparent transparent #f0f0f0 transparent;
+        }
+
+        /* Right side flap */
+        .flap-right {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .flap-right::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 250px 350px 0;
+            border-color: transparent #f0f0f0 transparent transparent;
+        }
+
+        /* Letter paper inside */
+        .letter-paper {
+            position: absolute;
+            width: 85%;
+            height: 80%;
+            background: #fffef7;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 40px 30px;
+            z-index: 3;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 1.2s ease 0.3s;
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .letter-text {
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+            text-align: justify;
+            color: #4c1c24;
+            line-height: 1.9;
+            font-style: italic;
+            position: relative;
+            opacity: 0;
+            transition: opacity 0.8s ease 1s;
+            z-index: 10;
+        }
+
+        /* Decorative hearts in letter - positioned in corners */
+        .letter-heart {
+            position: absolute;
+            font-size: clamp(16px, 2.8vw, 24px);
+            opacity: 0;
+            animation: floatHeart 3s ease-in-out infinite;
+            transition: opacity 0.8s ease 1.2s;
+            z-index: 1;
+        }
+
+        .letter-heart:nth-child(1) {
+            top: 8%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .letter-heart:nth-child(2) {
+            top: 10%;
+            right: 8%;
+            animation-delay: 0.5s;
+        }
+
+        .letter-heart:nth-child(3) {
+            bottom: 8%;
+            left: 7%;
+            animation-delay: 1s;
+        }
+
+        .letter-heart:nth-child(4) {
+            bottom: 6%;
+            right: 35%;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes floatHeart {
+            0%, 100% {
+                transform: translateY(0px) scale(1);
+            }
+            50% {
+                transform: translateY(-8px) scale(1.1);
+            }
+        }
+
+        /* Spider-Man decoration */
+        .spiderman {
+            position: absolute;
+            bottom: 4%;
+            right: 4%;
+            width: clamp(65px, 13vw, 110px);
+            height: auto;
+            opacity: 0;
+            transition: opacity 0.8s ease 1.2s;
+            animation: swingSpider 4s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes swingSpider {
+            0%, 100% {
+                transform: rotate(-3deg) translateY(0);
+            }
+            50% {
+                transform: rotate(3deg) translateY(-5px);
+            }
+        }
+
+        /* Heart seal on top of flap */
+        .heart-seal {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            width: 60px;
+            height: 60px;
+            z-index: 5;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            transition: all 1s ease;
+        }
+
+        .heart {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 48px;
+            background: #4c1c24;
+            border-radius: 30px 30px 0 0;
+        }
+
+        .heart::before {
+            left: 30px;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: translate(-50%, 0) scale(1);
+            }
+            50% {
+                transform: translate(-50%, 0) scale(1.1);
+            }
+        }
+
+        /* Opened state */
+        .opened .flap-top {
+            transform: rotateX(-170deg);
+        }
+
+        .opened .heart-seal {
+            opacity: 0;
+            transform: translate(-50%, -120px) scale(0.3) rotate(20deg);
+        }
+
+        .opened .envelope-wrapper {
+            animation: none;
+        }
+
+        /* Show content when opened */
+        .opened .letter-paper {
+            top: 50%;
+            height: 90%;
+            opacity: 1;
+        }
+
+        .opened .letter-text {
+            opacity: 1;
+        }
+
+        .opened .letter-heart {
+            opacity: 0.65;
+        }
+
+        .opened .spiderman {
+            opacity: 1;
+        }
+
+        /* Flowers coming from everywhere */
+        .blossom {
+            position: fixed;
+            font-size: clamp(28px, 4.5vw, 55px);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .blossom.left {
+            animation: bloomLeft 5s ease-out forwards;
+        }
+
+        .blossom.right {
+            animation: bloomRight 5s ease-out forwards;
+        }
+
+        .blossom.center {
+            animation: bloomCenter 4.5s ease-out forwards;
+        }
+
+        .blossom.diagonal-left {
+            animation: bloomDiagonalLeft 5.5s ease-out forwards;
+        }
+
+        .blossom.diagonal-right {
+            animation: bloomDiagonalRight 5.5s ease-out forwards;
+        }
+
+        @keyframes bloomCenter {
+            0% {
+                opacity: 0;
+                transform: translateY(110vh) scale(0) rotate(0deg);
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-10vh) scale(1.3) rotate(360deg);
+            }
+        }
+
+        @keyframes bloomLeft {
+            0% {
+                opacity: 0;
+                transform: translate(-30vw, 110vh) scale(0) rotate(0deg);
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(20vw, -10vh) scale(1.2) rotate(360deg);
+            }
+        }
+
+        @keyframes bloomRight {
+            0% {
+                opacity: 0;
+                transform: translate(30vw, 110vh) scale(0) rotate(0deg);
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-20vw, -10vh) scale(1.2) rotate(-360deg);
+            }
+        }
+
+        @keyframes bloomDiagonalLeft {
+            0% {
+                opacity: 0;
+                transform: translate(-50vw, 110vh) scale(0) rotate(0deg);
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(30vw, -10vh) scale(1.1) rotate(400deg);
+            }
+        }
+
+        @keyframes bloomDiagonalRight {
+            0% {
+                opacity: 0;
+                transform: translate(50vw, 110vh) scale(0) rotate(0deg);
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-30vw, -10vh) scale(1.1) rotate(-400deg);
+            }
+        }
+
+        .tap-instruction {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            text-align: center;
+            opacity: 0.9;
+            animation: pulse 2s ease-in-out infinite;
+            z-index: 1;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .opened .tap-instruction {
+            display: none;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .envelope-wrapper {
+                width: 95vw;
+                max-height: 320px;
+            }
+
+            .letter-paper {
+                padding: 30px 22px;
+            }
+
+            .letter-text {
+                font-size: clamp(1rem, 4.5vw, 1.35rem);
+                line-height: 1.75;
+            }
+
+            .flap-top::before,
+            .flap-back::before {
+                border-width: 0 200px 140px 200px;
+            }
+
+            .flap-left::before {
+                border-width: 0 0 320px 200px;
+            }
+
+            .flap-right::before {
+                border-width: 0 200px 320px 0;
+            }
+
+            .spiderman {
+                width: clamp(55px, 15vw, 90px);
+            }
+        }
+
+        @media (max-height: 650px) {
+            .envelope-wrapper {
+                height: 75vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="envelope-wrapper">
+            <div class="envelope">
+                <!-- Back flap -->
+                <div class="flap-back"></div>
+                
+                <!-- Side flaps -->
+                <div class="flap-left"></div>
+                <div class="flap-right"></div>
+                
+                <!-- Letter inside -->
+                <div class="letter-paper">
+                    <span class="letter-heart">❤️</span>
+                    <span class="letter-heart">💕</span>
+                    <span class="letter-heart">💖</span>
+                    <span class="letter-heart">💗</span>
+                    <p class="letter-text">Paola, ¿serías mi San Valentín ahora y siempre?</p>
+                    <img src="images.png">
+                </div>
+                
+                <!-- Top flap that opens -->
+                <div class="flap-top"></div>
+                
+                <!-- Heart seal -->
+                <div class="heart-seal">
+                    <div class="heart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tap-instruction">Toca para abrir la carta ❤️</div>
+
+    <script>
+        const body = document.body;
+        const container = document.getElementById('container');
+        const blossoms = ['🌸', '🌺', '🌼', '🌷', '🏵️', '💮', '🌻', '🌹', '💐', '🥀', '🪷', '🪻', '🌵', '🍀'];
+        const animations = ['left', 'right', 'center', 'diagonal-left', 'diagonal-right'];
+        let opened = false;
+
+        function createBlossom() {
+            const blossom = document.createElement('div');
+            blossom.className = 'blossom';
+            const animType = animations[Math.floor(Math.random() * animations.length)];
+            blossom.classList.add(animType);
+            blossom.textContent = blossoms[Math.floor(Math.random() * blossoms.length)];
+            
+            // Position across entire width
+            if (animType === 'center') {
+                blossom.style.left = (20 + Math.random() * 60) + 'vw';
+            } else if (animType === 'left' || animType === 'diagonal-left') {
+                blossom.style.left = Math.random() * 40 + 'vw';
+            } else {
+                blossom.style.left = (60 + Math.random() * 40) + 'vw';
+            }
+            
+            blossom.style.animationDelay = Math.random() * 0.3 + 's';
+            body.appendChild(blossom);
+
+            setTimeout(() => {
+                blossom.remove();
+            }, 6000);
+        }
+
+        function openLetter() {
+            if (!opened) {
+                opened = true;
+                container.classList.add('opened');
+                
+                // MASSIVE initial burst of flowers from everywhere
+                for (let i = 0; i < 80; i++) {
+                    setTimeout(() => createBlossom(), i * 40);
+                }
+
+                // Continuous stream of flowers
+                setInterval(() => {
+                    createBlossom();
+                    createBlossom();
+                    if (Math.random() > 0.4) {
+                        createBlossom();
+                    }
+                }, 250);
+            }
+        }
+
+        // Touch and click events
+        body.addEventListener('click', openLetter);
+        body.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            openLetter();
+        }, { passive: false });
+
+        // Prevent scrolling on mobile
+        document.addEventListener('touchmove', (e) => {
+            if (opened) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
